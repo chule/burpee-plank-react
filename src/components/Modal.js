@@ -11,8 +11,7 @@ class Modal extends Component {
 
         this.handleOpenModal = this.handleOpenModal.bind(this);
         this.handleCloseModal = this.handleCloseModal.bind(this);
-        this.timerPlus = this.timerPlus.bind(this);
-        this.timerMinus = this.timerMinus.bind(this);
+        this.timer = this.timer.bind(this);
         this.closeAndSet = this.closeAndSet.bind(this);
     }
 
@@ -24,25 +23,14 @@ class Modal extends Component {
         this.setState({ showModal: false });
     }
 
-    timerPlus(e) {
-        e.preventDefault();
-        this.props.handlerPlus();
+
+    timer(value) {
+
+        this.props.handler(value);
         var timerValue = this.state.timerValue;
         this.setState({
-            timerValue: timerValue += 1
+            timerValue: timerValue + value
         });
-        //this.props.reset();
-    }
-
-    timerMinus(e) {
-        e.preventDefault();
-        this.props.handlerMinus();
-        var timerValue = this.state.timerValue;
-        this.setState({
-            timerValue: timerValue -= 1
-        });
-        //this.props.reset();
-
     }
 
     closeAndSet(e) {
@@ -62,9 +50,9 @@ class Modal extends Component {
                 >
                     <button onClick={this.closeAndSet}>Close Settings</button>
                     <p> Hello Settings! {this.state.timerValue}</p>
-                    
-                    <button onClick={this.timerMinus}>Timer -</button>
-                    <button onClick={this.timerPlus}>Timer +</button>
+
+                    <button onClick={this.timer.bind(this, -1)}>Timer -</button>
+                    <button onClick={this.timer.bind(this, 1)}>Timer +</button>
 
 
                 </ReactModal>

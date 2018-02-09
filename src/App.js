@@ -18,25 +18,14 @@ class App extends Component {
 
     this.buttonClick = this.buttonClick.bind(this);
     this.buttonClickReset = this.buttonClickReset.bind(this);
-    this.handlerPlus = this.handlerPlus.bind(this);
-    this.handlerMinus = this.handlerMinus.bind(this);
+    this.handler = this.handler.bind(this);
   }
 
 
-  handlerPlus(e) {
-    //e.preventDefault();
-    
+  handler(addedValue) {
     var value = this.state.timerValue;
     this.setState({
-      timerValue: value += 1
-    });
-  }
-
-  handlerMinus(e) {
-    //e.preventDefault();
-    var value = this.state.timerValue;
-    this.setState({
-      timerValue: value -= 1
+      timerValue: value + addedValue
     });
   }
 
@@ -69,7 +58,7 @@ class App extends Component {
     if (e) {
       e.preventDefault();
     }
-    
+
     this.setState({
       number: 0,
       timer: this.state.timerValue,
@@ -85,10 +74,10 @@ class App extends Component {
           <h1 className="App-title">Burpee plank timer</h1>
         </header>
 
-        <Modal handlerPlus={this.handlerPlus} 
-               handlerMinus={this.handlerMinus}
-               reset={this.buttonClickReset}
-               timerValue={this.state.timerValue}
+        <Modal handler={this.handler}
+          //handlerMinus={this.handlerMinus}
+          reset={this.buttonClickReset}
+          timerValue={this.state.timerValue}
         />
 
         <p className="App-intro">
@@ -98,7 +87,7 @@ class App extends Component {
           <br />
           Timer: {this.state.timer}
         </p>
-        <Bar width="200" height="10" data={this.state.timer} timerValue={this.state.timerValue}/>
+        <Bar width="200" height="10" data={this.state.timer} timerValue={this.state.timerValue} />
         <Button name="Add one!" onClick={this.buttonClick} isDisabled={this.state.runTimer} />
         <Button name="Reset" onClick={this.buttonClickReset} />
       </div>
