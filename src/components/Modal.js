@@ -1,28 +1,43 @@
 import React, { Component } from 'react';
-import ReactModal from 'react-modal';
+// import ReactModal from 'react-modal';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
+import IconButton from 'material-ui/IconButton';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 
 class Modal extends Component {
     constructor(props) {
         super(props);
         this.state = {
             showModal: false,
-            timerValue: this.props.timerValue
+            timerValue: this.props.timerValue,
+            open: false
         };
 
-        this.handleOpenModal = this.handleOpenModal.bind(this);
-        this.handleCloseModal = this.handleCloseModal.bind(this);
+        // this.handleOpenModal = this.handleOpenModal.bind(this);
+        // this.handleCloseModal = this.handleCloseModal.bind(this);
         this.timer = this.timer.bind(this);
         this.closeAndSet = this.closeAndSet.bind(this);
     }
 
-    handleOpenModal() {
-        this.setState({ showModal: true });
-    }
+    // handleOpenModal() {
+    //     this.setState({ showModal: true });
+    // }
 
-    handleCloseModal() {
-        this.setState({ showModal: false });
-    }
+    // handleCloseModal() {
+    //     this.setState({ showModal: false });
+    // }
 
+
+    handleOpen = () => {
+        this.setState({ open: true });
+    };
+
+    handleClose = () => {
+        this.setState({ open: false });
+        this.props.reset();
+    };
 
     timer(value) {
 
@@ -40,24 +55,49 @@ class Modal extends Component {
     }
 
     render() {
+
+        const actions = [
+            // <FlatButton
+            //     label="Cancel"
+            //     primary={true}
+            //     onClick={this.handleClose}
+            // />,
+            <FlatButton
+                label="Submit"
+                primary={true}
+                //keyboardFocused={true}
+                onClick={this.handleClose}
+            />,
+        ];
+
+
         return (
             <div>
-                <button onClick={this.handleOpenModal}>Open Settings</button>
-                <ReactModal
-                    isOpen={this.state.showModal}
-                    contentLabel="Minimal Modal Example"
-                    appElement={document.getElementById('root')}
+
+                <IconButton iconStyle={{ fill: "white" }}>
+                    <MoreVertIcon
+                        onClick={this.handleOpen}
+                    />
+                </IconButton>
+
+
+                <Dialog
+                    title="Set timer value"
+                    actions={actions}
+                    modal={false}
+                    open={this.state.open}
+                    onRequestClose={this.handleClose}
                 >
-                    <button onClick={this.closeAndSet}>Close Settings</button>
-                    <p> Hello Settings! {this.state.timerValue}</p>
-
-                    <button onClick={this.timer.bind(this, -1)}>Timer -</button>
-                    <button onClick={this.timer.bind(this, 1)}>Timer +</button>
-
-
-                </ReactModal>
+                    <div>
+                    <h2> {this.state.timerValue}</h2>
+    
+                    <RaisedButton onClick={this.timer.bind(this, -1)}>Timer -</RaisedButton>
+                    <RaisedButton onClick={this.timer.bind(this, 1)}>Timer +</RaisedButton>
+                    </div>
+                </Dialog>
             </div>
         );
+
     }
 };
 
