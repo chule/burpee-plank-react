@@ -3,8 +3,10 @@ import React, { Component } from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
-import IconButton from 'material-ui/IconButton';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+// import IconButton from 'material-ui/IconButton';
+// import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import MenuItem from 'material-ui/MenuItem';
+
 
 class Modal extends Component {
     constructor(props) {
@@ -74,12 +76,13 @@ class Modal extends Component {
         return (
             <div>
 
-                <IconButton iconStyle={{ fill: "white" }}>
+                {/* <IconButton iconStyle={{ fill: "white" }}>
                     <MoreVertIcon
                         onClick={this.handleOpen}
                     />
-                </IconButton>
-
+                </IconButton> */}
+                {/* <FlatButton onClick={this.handleOpen}>Settings</FlatButton> */}
+                <MenuItem onClick={this.handleOpen}>Set timer</MenuItem>
 
                 <Dialog
                     title="Set timer value"
@@ -88,11 +91,14 @@ class Modal extends Component {
                     open={this.state.open}
                     onRequestClose={this.handleClose}
                 >
-                    <div>
-                    <h2> {this.state.timerValue}</h2>
-    
-                    <RaisedButton onClick={this.timer.bind(this, -1)}>Timer -</RaisedButton>
-                    <RaisedButton onClick={this.timer.bind(this, 1)}>Timer +</RaisedButton>
+                    <div className="settingsContainer">
+                        <div>
+                            <h2> {this.state.timerValue}</h2>
+                        </div>
+                        <div>
+                            <RaisedButton onClick={this.timer.bind(this, -1)}>Timer -</RaisedButton>
+                            <RaisedButton onClick={this.timer.bind(this, 1)}>Timer +</RaisedButton>
+                        </div>
                     </div>
                 </Dialog>
             </div>

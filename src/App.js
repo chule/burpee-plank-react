@@ -7,6 +7,9 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 //import Button from "./components/Button";
 
+
+import Drawer from 'material-ui/Drawer';
+import MenuItem from 'material-ui/MenuItem';
 import Bar from "./components/Bar";
 import Modal from "./components/Modal.js";
 import './App.css';
@@ -35,16 +38,36 @@ class App extends Component {
       number: 0,
       timer: 10,
       runTimer: false,
-      timerValue: 10
+      timerValue: 10,
+      open: false,
+      windowWidth: 0,
+      windowHeight: 0
 
     };
 
     this.buttonClick = this.buttonClick.bind(this);
     this.buttonClickReset = this.buttonClickReset.bind(this);
     this.handler = this.handler.bind(this);
-    this.appBarClick = this.appBarClick.bind(this);
+
+    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   }
 
+  componentDidMount() {
+    this.updateWindowDimensions();
+    window.addEventListener('resize', this.updateWindowDimensions);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateWindowDimensions);
+  }
+
+  updateWindowDimensions() {
+    this.setState({ windowWidth: window.innerWidth, windowHeight: window.innerHeight });
+  }
+
+  handleToggle = () => this.setState({ open: !this.state.open });
+
+  handleClose = () => this.setState({ open: false });
 
   handler(addedValue) {
     var value = this.state.timerValue;
@@ -88,50 +111,79 @@ class App extends Component {
     });
   }
 
-  appBarClick() {
-    console.log(`appBarClick`);
-  }
-
   render() {
     return (
 
       <MuiThemeProvider muiTheme={muiTheme}>
         <div className="App">
 
+          {/* <RaisedButton
+            label="Open Drawer"
+            onClick={this.handleToggle}
+          /> */}
+
           <AppBar
             title="Burpee plank timer"
-            titleStyle={{textAlign:"left"}}
-            onLeftIconButtonClick={this.appBarClick}
-            iconElementLeft={
-              <Modal handler={this.handler}
-                reset={this.buttonClickReset}
-                timerValue={this.state.timerValue}
-              />
-            }
+            titleStyle={{ textAlign: "left" }}
+
+            onLeftIconButtonClick={this.handleToggle}
+
+
             iconElementRight={<FlatButton label="Reset" onClick={this.buttonClickReset} style={buttonStyle} />}
           />
 
 
+          <div className="mainContent">
+            <div className="mainConfig">
+              <div>
+                <p>
+                  Number of repetitions: {this.state.number}
+                  <br />
+                  Timer duration: {this.state.timerValue}
+                  <br />
+                  Timer: {this.state.timer}
+                </p>
 
-          <p className="App-intro">
-            Current number = {this.state.number}
-            <br />
-            Timer duration: {this.state.timerValue}
-            <br />
-            Timer: {this.state.timer}
-          </p>
+                { this.state.windowWidth > 768 ?
+                  <Bar className="bar" width={this.state.windowWidth * 2/3} height="30" data={this.state.timer} timerValue={this.state.timerValue} /> :
+                  <Bar className="bar" width="200" height="10" data={this.state.timer} timerValue={this.state.timerValue} />
+                }
 
-          <Bar width="200" height="10" data={this.state.timer} timerValue={this.state.timerValue} />
-          {/* <Button name="Add one!" onClick={this.buttonClick} isDisabled={this.state.runTimer} />
+              </div>
+              {/* <Button name="Add one!" onClick={this.buttonClick} isDisabled={this.state.runTimer} />
           <Button name="Reset" onClick={this.buttonClickReset} /> */}
+            </div>
 
-          <RaisedButton
-            label="Add one!"
-            onClick={this.buttonClick}
-            style={buttonStyle}
-            disabled={this.state.runTimer}
-          />
-          
+            <div className="mainButton">
+              <RaisedButton
+                buttonStyle={{ height: 150, width: 150 }}
+                label="Add one!"
+                onClick={this.buttonClick}
+                style={buttonStyle}
+                disabled={this.state.runTimer}
+              />
+            </div>
+          </div>
+
+
+
+          <Drawer
+            docked={false}
+
+            open={this.state.open}
+            onRequestChange={(open) => this.setState({ open })}
+          >
+            <Modal
+              onClick={this.appBarClick}
+              handler={this.handler}
+              reset={this.buttonClickReset}
+              timerValue={this.state.timerValue} />
+
+            <MenuItem onClick={this.buttonClickReset}>Reset repetitions</MenuItem>
+
+            <MenuItem onClick={this.handleClose}>Close drawer</MenuItem>
+
+          </Drawer>
 
         </div>
       </MuiThemeProvider>
