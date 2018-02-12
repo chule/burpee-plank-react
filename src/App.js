@@ -8,7 +8,7 @@ import FlatButton from 'material-ui/FlatButton';
 //import Button from "./components/Button";
 
 import { auth, database, googleAuthProvider } from './components/firebase';
-import CurrentUser from './components/CurrentUser';
+// import CurrentUser from './components/CurrentUser';
 // import SignIn from './components/SignIn';
 
 import Drawer from 'material-ui/Drawer';
@@ -158,10 +158,10 @@ class App extends Component {
             iconElementRight={
               // <FlatButton label="Save" />
               user
-                ? <div>
+                ? <FlatButton label={"Sign Out " + user.displayName.split(" ")[0]} onClick={() => auth.signOut()}  /> 
 
-                  < CurrentUser user={user} />
-                </div>
+                  // < CurrentUser user={user} />
+                
                 : <FlatButton label="Sign in" onClick={() => auth.signInWithPopup(googleAuthProvider)}  />
             }
 
