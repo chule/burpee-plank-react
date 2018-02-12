@@ -41,7 +41,8 @@ class App extends Component {
       timerValue: 10,
       open: false,
       windowWidth: 0,
-      windowHeight: 0
+      windowHeight: 0,
+      color_red: false
 
     };
 
@@ -50,7 +51,12 @@ class App extends Component {
     this.handler = this.handler.bind(this);
 
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+    this.changeColor = this.changeColor.bind(this);
   }
+
+  changeColor() {
+    this.setState({color_red: !this.state.color_red})
+}
 
   componentDidMount() {
     this.updateWindowDimensions();
@@ -81,9 +87,10 @@ class App extends Component {
       const currentTimer = this.state.timer;
       if (currentTimer === 0 || this.state.runTimer === false) {
         clearInterval(myInterval);
-        this.setState({ runTimer: false })
+        this.setState({ runTimer: false });
+        this.changeColor();
       } else {
-        this.setState({ timer: currentTimer - 1 })
+        this.setState({ timer: currentTimer - 1 });
       }
     }, 1000);
   }
@@ -96,6 +103,7 @@ class App extends Component {
       timer: this.state.timerValue,
       runTimer: true
     });
+    this.changeColor();
     this.timer();
   }
 
@@ -112,6 +120,9 @@ class App extends Component {
   }
 
   render() {
+
+    let bgColor = this.state.color_red ? "red" : "white"
+
     return (
 
       <MuiThemeProvider muiTheme={muiTheme}>
@@ -133,7 +144,7 @@ class App extends Component {
           />
 
 
-          <div className="mainContent">
+          <div className="mainContent" style={{backgroundColor: bgColor}}>
             <div className="mainConfig">
               <div>
                 <p>
@@ -146,7 +157,7 @@ class App extends Component {
 
                 { this.state.windowWidth > 768 ?
                   <Bar className="bar" width={this.state.windowWidth * 2/3} height="30" data={this.state.timer} timerValue={this.state.timerValue} /> :
-                  <Bar className="bar" width="200" height="10" data={this.state.timer} timerValue={this.state.timerValue} />
+                  <Bar className="bar" width="200" height="15" data={this.state.timer} timerValue={this.state.timerValue} />
                 }
 
               </div>

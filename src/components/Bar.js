@@ -44,6 +44,11 @@ class Bar extends Component {
 		var g = svg.append("g");
 
         g.append("rect")
+            .attr("width", width)
+            .attr("height", height)
+            .style("fill", "white");
+
+        g.append("rect")
             .attr("width", scaleX(data))
             .attr("height", height)
             .style("fill", "steelblue");
