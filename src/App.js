@@ -7,6 +7,9 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 //import Button from "./components/Button";
 
+import { auth, database, googleAuthProvider } from './components/firebase';
+import CurrentUser from './components/CurrentUser';
+// import SignIn from './components/SignIn';
 
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
@@ -42,7 +45,8 @@ class App extends Component {
       open: false,
       windowWidth: 0,
       windowHeight: 0,
-      color_red: false
+      color_red: false,
+      user: null
 
     };
 
@@ -54,9 +58,19 @@ class App extends Component {
     this.changeColor = this.changeColor.bind(this);
   }
 
+  componentWillMount() {
+    auth.onAuthStateChanged((user) => {
+      this.setState({ user });
+      // this.restaurantsRef = database.ref('restaurants');
+      // this.restaurantsRef.on('value', snapshot => {
+      //   this.setState({ restaurants: snapshot.val() });
+      // });
+    });
+  }
+
   changeColor() {
-    this.setState({color_red: !this.state.color_red})
-}
+    this.setState({ color_red: !this.state.color_red })
+  }
 
   componentDidMount() {
     this.updateWindowDimensions();
@@ -122,6 +136,7 @@ class App extends Component {
   render() {
 
     let bgColor = this.state.color_red ? "red" : "white"
+    const { user } = this.state;
 
     return (
 
@@ -140,12 +155,35 @@ class App extends Component {
             onLeftIconButtonClick={this.handleToggle}
 
 
-            iconElementRight={<FlatButton label="Reset" onClick={this.buttonClickReset} style={buttonStyle} />}
+            iconElementRight={
+              // <FlatButton label="Save" />
+              user
+                ? <div>
+
+                  < CurrentUser user={user} />
+                </div>
+                : <FlatButton label="Sign in" onClick={() => auth.signInWithPopup(googleAuthProvider)}  />
+            }
+
+            
           />
 
+          {/* <FlatButton label="Sign in" onClick={this.buttonClickReset} style={buttonStyle} /> */}
 
-          <div className="mainContent" style={{backgroundColor: bgColor}}>
+          {/* {user
+            ? <div>
+
+              <CurrentUser user={user} />
+            </div>
+            : <SignIn />
+          } */}
+
+
+          <div className="mainContent" style={{ backgroundColor: bgColor }}>
             <div className="mainConfig">
+
+
+
               <div>
                 <p>
                   Number of repetitions: {this.state.number}
@@ -155,8 +193,8 @@ class App extends Component {
                   Timer: {this.state.timer}
                 </p>
 
-                { this.state.windowWidth > 768 ?
-                  <Bar className="bar" width={this.state.windowWidth * 2/3} height="30" data={this.state.timer} timerValue={this.state.timerValue} /> :
+                {this.state.windowWidth > 768 ?
+                  <Bar className="bar" width={this.state.windowWidth * 2 / 3} height="30" data={this.state.timer} timerValue={this.state.timerValue} /> :
                   <Bar className="bar" width="200" height="15" data={this.state.timer} timerValue={this.state.timerValue} />
                 }
 
@@ -197,7 +235,7 @@ class App extends Component {
           </Drawer>
 
         </div>
-      </MuiThemeProvider>
+      </MuiThemeProvider >
 
     );
   }
