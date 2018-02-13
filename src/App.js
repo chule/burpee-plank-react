@@ -7,6 +7,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 //import Button from "./components/Button";
 
+import pick from 'lodash/pick';
+
 import { auth, database, googleAuthProvider } from './components/firebase';
 // import CurrentUser from './components/CurrentUser';
 // import SignIn from './components/SignIn';
@@ -37,6 +39,7 @@ const buttonStyle = {
 class App extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       number: 0,
       timer: 10,
@@ -50,6 +53,10 @@ class App extends Component {
 
     };
 
+    const date = new Date();
+
+    this.todaysDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+
     this.buttonClick = this.buttonClick.bind(this);
     this.buttonClickReset = this.buttonClickReset.bind(this);
     this.handler = this.handler.bind(this);
@@ -59,12 +66,33 @@ class App extends Component {
   }
 
   componentWillMount() {
+
+    //this.bpRef = database.ref('users');
+
     auth.onAuthStateChanged((user) => {
+
       this.setState({ user });
-      // this.restaurantsRef = database.ref('restaurants');
-      // this.restaurantsRef.on('value', snapshot => {
-      //   this.setState({ restaurants: snapshot.val() });
-      // });
+
+      if (user) {
+
+        console.log(user)
+        database.ref(`users/${user.uid}/email`).once("value", snapshot => {
+          const email = snapshot.val();
+          if (email) {
+            //console.log("user exists!", email);
+
+            database.ref(`users/${user.uid}/exercises/${this.todaysDate}`)
+              .set({ repetitions: this.state.number, timer: this.state.timerValue, time: 1518530821537 });
+
+          } else { // add user to database
+            database.ref('users')
+              .child(user.uid)
+              .set(pick(user, ['displayName', 'email', 'uid', 'photoURL']));
+
+          }
+        });
+      }
+
     });
   }
 
@@ -135,6 +163,7 @@ class App extends Component {
 
   render() {
 
+    console.log(this.todaysDate)
     let bgColor = this.state.color_red ? "red" : "white"
     const { user } = this.state;
 
@@ -158,26 +187,15 @@ class App extends Component {
             iconElementRight={
               // <FlatButton label="Save" />
               user
-                ? <FlatButton label={"Sign Out " + user.displayName.split(" ")[0]} onClick={() => auth.signOut()}  /> 
+                ? <FlatButton label={"Sign Out " + user.displayName.split(" ")[0]} onClick={() => auth.signOut()} />
 
-                  // < CurrentUser user={user} />
-                
-                : <FlatButton label="Sign in" onClick={() => auth.signInWithPopup(googleAuthProvider)}  />
+                // < CurrentUser user={user} />
+
+                : <FlatButton label="Sign in" onClick={() => auth.signInWithPopup(googleAuthProvider)} />
             }
 
-            
+
           />
-
-          {/* <FlatButton label="Sign in" onClick={this.buttonClickReset} style={buttonStyle} /> */}
-
-          {/* {user
-            ? <div>
-
-              <CurrentUser user={user} />
-            </div>
-            : <SignIn />
-          } */}
-
 
           <div className="mainContent" style={{ backgroundColor: bgColor }}>
             <div className="mainConfig">
