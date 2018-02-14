@@ -28,7 +28,6 @@ class Modal extends Component {
     handleClose = () => {
         this.props.closeDrawer();
         this.setState({ open: false });
-        //this.props.reset();
     };
 
     timer(value) {

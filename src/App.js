@@ -15,6 +15,7 @@ import pick from 'lodash/pick';
 
 import { auth, database, googleAuthProvider } from './components/firebase';
 
+
 import Bar from "./components/Bar";
 import Modal from "./components/Modal";
 import './App.css';
@@ -78,9 +79,7 @@ class App extends Component {
 
         database.ref(`users/${user.uid}`).once("value", snapshot => {
           const email = snapshot.child("email").exists();
-          if (email) {
-
-            //database.ref(`users/${user.uid}/exercises/`).once("value", snap => {
+          if (email) { // if use exist
 
             if (snapshot.child(`exercises/${this.todaysDate}`).exists()) {
               let serverRepetitions = snapshot.child(`exercises/${this.todaysDate}/repetitions`).val();
@@ -91,16 +90,6 @@ class App extends Component {
               database.ref(`users/${user.uid}/exercises/${this.todaysDate}`)
                 .set({ repetitions: this.state.number, timer: this.state.timerValue, time: Date.now() });
             }
-
-
-
-
-            // });
-
-            //.set({ repetitions: this.state.number, timer: this.state.timerValue, time: 1518530821537 });
-
-            // database.ref(`users/${user.uid}/exercises/${this.todaysDate}`)
-            //   .set({ repetitions: this.state.number, timer: this.state.timerValue, time: 1518530821537 });
 
           } else { // add user to database
             database.ref('users')
@@ -146,15 +135,6 @@ class App extends Component {
     });
   }
 
-  // timer(value) {
-
-  //   this.props.handler(value);
-  //   var timerValue = this.state.timerValue;
-  //   this.setState({
-  //     timerValue: timerValue + value
-  //   });
-  // }
-
   timer() {
     let myInterval = setInterval(() => {
       const currentTimer = this.state.timer;
@@ -181,7 +161,7 @@ class App extends Component {
     this.timer();
 
     const repetitions = this.state.serverRepetitions + currentNum;
-    
+
 
     if (this.state.user) {
       database.ref(`users/${this.state.user.uid}/exercises/${this.todaysDate}`)
@@ -204,6 +184,7 @@ class App extends Component {
       serverRepetitions: 0
     });
 
+
   }
 
   signOut(e) {
@@ -214,12 +195,10 @@ class App extends Component {
     this.buttonClickReset();
   }
 
-
-
-
   render() {
 
-    let bgColor = this.state.color_red ? "red" : "white"
+    let bgColor = this.state.color_red ? "red" : "white";
+    let pColor = this.state.color_red ? "white" : "#55585a";
     const { user } = this.state;
 
     return (
@@ -227,38 +206,23 @@ class App extends Component {
       <MuiThemeProvider muiTheme={muiTheme}>
         <div className="App">
 
-          {/* <RaisedButton
-            label="Open Drawer"
-            onClick={this.handleToggle}
-          /> */}
-
           <AppBar
             title="Burpee plank timer"
             titleStyle={{ textAlign: "left" }}
-
             onLeftIconButtonClick={this.handleToggle}
-
-
             iconElementRight={
-              // <FlatButton label="Save" />
               user
                 ? <FlatButton label={"Sign Out " + user.displayName.split(" ")[0]} onClick={this.signOut} />
 
-                // < CurrentUser user={user} />
-
                 : <FlatButton label="Sign in" onClick={() => auth.signInWithPopup(googleAuthProvider)} />
             }
-
-
           />
 
           <div className="mainContent" style={{ backgroundColor: bgColor }}>
             <div className="mainConfig">
 
-
-
               <div>
-                <p>
+                <p style={{ color: pColor }}>
                   Repetitions today: {this.state.number + this.state.serverRepetitions}
                   <br />
                   Timer duration: {this.state.timerValue}
@@ -272,8 +236,7 @@ class App extends Component {
                 }
 
               </div>
-              {/* <Button name="Add one!" onClick={this.buttonClick} isDisabled={this.state.runTimer} />
-          <Button name="Reset" onClick={this.buttonClickReset} /> */}
+
             </div>
 
             <div className="mainButton">
@@ -287,20 +250,18 @@ class App extends Component {
             </div>
           </div>
 
-
-
           <Drawer
             docked={false}
-
             open={this.state.open}
             onRequestChange={(open) => this.setState({ open })}
           >
             <Modal
               onClick={this.appBarClick}
               handler={this.handler}
-              reset={this.buttonClickReset}
-              timerValue={this.state.timerValue} 
-              closeDrawer={this.handleClose}/>
+              //reset={this.buttonClickReset}
+              timerValue={this.state.timerValue}
+              closeDrawer={this.handleClose}
+            />
 
             <MenuItem onClick={this.buttonClickReset}>Reset repetitions</MenuItem>
 
