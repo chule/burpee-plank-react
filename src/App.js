@@ -85,13 +85,13 @@ class App extends Component {
             if (snapshot.child(`exercises/${this.todaysDate}`).exists()) {
               let serverRepetitions = snapshot.child(`exercises/${this.todaysDate}/repetitions`).val();
               let serverTimer = snapshot.child(`exercises/${this.todaysDate}/timer`).val();
-              //console.log(serverRepetitions)
+
               this.setState({ serverRepetitions: serverRepetitions, timerValue: serverTimer, timer: serverTimer });
             } else {
               database.ref(`users/${user.uid}/exercises/${this.todaysDate}`)
                 .set({ repetitions: this.state.number, timer: this.state.timerValue, time: Date.now() });
             }
-            //console.log(snapshot.child(`exercises/${this.todaysDate}`))
+
 
 
 
@@ -181,7 +181,6 @@ class App extends Component {
 
     const repetitions = this.state.serverRepetitions + currentNum;
     const timer = this.state.timer;
-    console.log(repetitions, timer)
 
     if (this.state.user) {
       database.ref(`users/${this.state.user.uid}/exercises/${this.todaysDate}`)

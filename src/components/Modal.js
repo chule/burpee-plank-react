@@ -65,7 +65,7 @@ class Modal extends Component {
     }
 
     render() {
-        console.log()
+
         const actions = [
             // <FlatButton
             //     label="Cancel"
