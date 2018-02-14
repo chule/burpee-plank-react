@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
-// import ReactModal from 'react-modal';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
-// import IconButton from 'material-ui/IconButton';
-// import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import MenuItem from 'material-ui/MenuItem';
 
 
@@ -17,29 +14,19 @@ class Modal extends Component {
             open: false
         };
 
-        // this.handleOpenModal = this.handleOpenModal.bind(this);
-        // this.handleCloseModal = this.handleCloseModal.bind(this);
         this.timer = this.timer.bind(this);
-        this.closeAndSet = this.closeAndSet.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
         this.setState({ timerValue: nextProps.timerValue });
     }
-    // handleOpenModal() {
-    //     this.setState({ showModal: true });
-    // }
-
-    // handleCloseModal() {
-    //     this.setState({ showModal: false });
-    // }
-
 
     handleOpen = () => {
         this.setState({ open: true });
     };
 
     handleClose = () => {
+        this.props.closeDrawer();
         this.setState({ open: false });
         //this.props.reset();
     };
@@ -56,12 +43,6 @@ class Modal extends Component {
         }
 
 
-    }
-
-    closeAndSet(e) {
-        e.preventDefault();
-        this.handleCloseModal();
-        this.props.reset();
     }
 
     render() {

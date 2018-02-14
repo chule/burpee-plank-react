@@ -1,22 +1,22 @@
 import React, { Component } from 'react';
-import { blueGrey600 } from 'material-ui/styles/colors';
+
+
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
+import Drawer from 'material-ui/Drawer';
+import MenuItem from 'material-ui/MenuItem';
+import { blueGrey600 } from 'material-ui/styles/colors';
 //import Button from "./components/Button";
 
 import pick from 'lodash/pick';
 
 import { auth, database, googleAuthProvider } from './components/firebase';
-// import CurrentUser from './components/CurrentUser';
-// import SignIn from './components/SignIn';
 
-import Drawer from 'material-ui/Drawer';
-import MenuItem from 'material-ui/MenuItem';
 import Bar from "./components/Bar";
-import Modal from "./components/Modal.js";
+import Modal from "./components/Modal";
 import './App.css';
 
 // This replaces the textColor value on the palette
@@ -171,20 +171,21 @@ class App extends Component {
   buttonClick(e) {
     e.preventDefault();
     const currentNum = this.state.number + 1;
+    const timerValue = this.state.timerValue;
     this.setState({
       number: currentNum,
-      timer: this.state.timerValue,
+      timer: timerValue,
       runTimer: true
     });
     this.changeColor();
     this.timer();
 
     const repetitions = this.state.serverRepetitions + currentNum;
-    const timer = this.state.timer;
+    
 
     if (this.state.user) {
       database.ref(`users/${this.state.user.uid}/exercises/${this.todaysDate}`)
-        .set({ repetitions: repetitions, timer: this.state.timerValue, time: Date.now() });
+        .set({ repetitions: repetitions, timer: timerValue, time: Date.now() });
     }
 
 
@@ -298,7 +299,8 @@ class App extends Component {
               onClick={this.appBarClick}
               handler={this.handler}
               reset={this.buttonClickReset}
-              timerValue={this.state.timerValue} />
+              timerValue={this.state.timerValue} 
+              closeDrawer={this.handleClose}/>
 
             <MenuItem onClick={this.buttonClickReset}>Reset repetitions</MenuItem>
 
