@@ -41,6 +41,7 @@ class App extends Component {
     super(props);
 
     this.state = {
+      serverRepetitions: 0,
       number: 0,
       timer: 10,
       runTimer: false,
@@ -63,11 +64,11 @@ class App extends Component {
 
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
     this.changeColor = this.changeColor.bind(this);
+
+    this.signOut = this.signOut.bind(this);
   }
 
   componentWillMount() {
-
-    //this.bpRef = database.ref('users');
 
     auth.onAuthStateChanged((user) => {
 
@@ -75,19 +76,39 @@ class App extends Component {
 
       if (user) {
 
-        console.log(user)
-        database.ref(`users/${user.uid}/email`).once("value", snapshot => {
-          const email = snapshot.val();
+        database.ref(`users/${user.uid}`).once("value", snapshot => {
+          const email = snapshot.child("email").exists();
           if (email) {
-            //console.log("user exists!", email);
 
-            database.ref(`users/${user.uid}/exercises/${this.todaysDate}`)
-              .set({ repetitions: this.state.number, timer: this.state.timerValue, time: 1518530821537 });
+            //database.ref(`users/${user.uid}/exercises/`).once("value", snap => {
+
+            if (snapshot.child(`exercises/${this.todaysDate}`).exists()) {
+              let serverRepetitions = snapshot.child(`exercises/${this.todaysDate}/repetitions`).val();
+              let serverTimer = snapshot.child(`exercises/${this.todaysDate}/timer`).val();
+              //console.log(serverRepetitions)
+              this.setState({ serverRepetitions: serverRepetitions, timerValue: serverTimer, timer: serverTimer });
+            } else {
+              database.ref(`users/${user.uid}/exercises/${this.todaysDate}`)
+                .set({ repetitions: this.state.number, timer: this.state.timerValue, time: Date.now() });
+            }
+            //console.log(snapshot.child(`exercises/${this.todaysDate}`))
+
+
+
+            // });
+
+            //.set({ repetitions: this.state.number, timer: this.state.timerValue, time: 1518530821537 });
+
+            // database.ref(`users/${user.uid}/exercises/${this.todaysDate}`)
+            //   .set({ repetitions: this.state.number, timer: this.state.timerValue, time: 1518530821537 });
 
           } else { // add user to database
             database.ref('users')
               .child(user.uid)
               .set(pick(user, ['displayName', 'email', 'uid', 'photoURL']));
+
+            database.ref(`users/${user.uid}/exercises/${this.todaysDate}`)
+              .set({ repetitions: this.state.number, timer: this.state.timerValue, time: Date.now() });
 
           }
         });
@@ -120,9 +141,19 @@ class App extends Component {
   handler(addedValue) {
     var value = this.state.timerValue;
     this.setState({
-      timerValue: value + addedValue
+      timerValue: value + addedValue,
+      timer: value + addedValue
     });
   }
+
+  // timer(value) {
+
+  //   this.props.handler(value);
+  //   var timerValue = this.state.timerValue;
+  //   this.setState({
+  //     timerValue: timerValue + value
+  //   });
+  // }
 
   timer() {
     let myInterval = setInterval(() => {
@@ -139,14 +170,26 @@ class App extends Component {
 
   buttonClick(e) {
     e.preventDefault();
-    const currentNum = this.state.number;
+    const currentNum = this.state.number + 1;
     this.setState({
-      number: currentNum + 1,
+      number: currentNum,
       timer: this.state.timerValue,
       runTimer: true
     });
     this.changeColor();
     this.timer();
+
+    const repetitions = this.state.serverRepetitions + currentNum;
+    const timer = this.state.timer;
+    console.log(repetitions, timer)
+
+    if (this.state.user) {
+      database.ref(`users/${this.state.user.uid}/exercises/${this.todaysDate}`)
+        .set({ repetitions: repetitions, timer: this.state.timerValue, time: Date.now() });
+    }
+
+
+
   }
 
   buttonClickReset(e) {
@@ -157,13 +200,25 @@ class App extends Component {
     this.setState({
       number: 0,
       timer: this.state.timerValue,
-      runTimer: false
+      runTimer: false,
+      serverRepetitions: 0
     });
+
   }
+
+  signOut(e) {
+    if (e) {
+      e.preventDefault();
+    }
+    auth.signOut();
+    this.buttonClickReset();
+  }
+
+
+
 
   render() {
 
-    console.log(this.todaysDate)
     let bgColor = this.state.color_red ? "red" : "white"
     const { user } = this.state;
 
@@ -187,7 +242,7 @@ class App extends Component {
             iconElementRight={
               // <FlatButton label="Save" />
               user
-                ? <FlatButton label={"Sign Out " + user.displayName.split(" ")[0]} onClick={() => auth.signOut()} />
+                ? <FlatButton label={"Sign Out " + user.displayName.split(" ")[0]} onClick={this.signOut} />
 
                 // < CurrentUser user={user} />
 
@@ -204,7 +259,7 @@ class App extends Component {
 
               <div>
                 <p>
-                  Number of repetitions: {this.state.number}
+                  Repetitions today: {this.state.number + this.state.serverRepetitions}
                   <br />
                   Timer duration: {this.state.timerValue}
                   <br />

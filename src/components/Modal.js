@@ -23,6 +23,9 @@ class Modal extends Component {
         this.closeAndSet = this.closeAndSet.bind(this);
     }
 
+    componentWillReceiveProps(nextProps) {
+        this.setState({ timerValue: nextProps.timerValue });
+    }
     // handleOpenModal() {
     //     this.setState({ showModal: true });
     // }
@@ -38,16 +41,21 @@ class Modal extends Component {
 
     handleClose = () => {
         this.setState({ open: false });
-        this.props.reset();
+        //this.props.reset();
     };
 
     timer(value) {
-
-        this.props.handler(value);
         var timerValue = this.state.timerValue;
-        this.setState({
-            timerValue: timerValue + value
-        });
+
+        if (this.state.timerValue + value > 0) {
+            this.props.handler(value);
+        
+            this.setState({
+                timerValue: timerValue + value
+            });
+        }
+
+
     }
 
     closeAndSet(e) {
@@ -57,7 +65,7 @@ class Modal extends Component {
     }
 
     render() {
-
+        console.log()
         const actions = [
             // <FlatButton
             //     label="Cancel"
